@@ -9,3 +9,7 @@ from frappe.utils import nowdate, flt, cint, cstr,now_datetime,getdate, add_days
 def validate_user_permission(self,method):
 	if self.user == frappe.session.user:
 		frappe.throw("You cannot change permission for your own user id")
+	
+
+def execute_fun():
+    frappe.get_doc("Purchase Receipt","PREBIL20-2100044").submit()
