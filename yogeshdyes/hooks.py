@@ -41,6 +41,7 @@ doctype_js = {
 	"Purchase Receipt":"public/js/doctype_js/purchase_receipt.js",
 	"Delivery Note":"public/js/doctype_js/delivery_note.js",
 	"Outward Sample": "public/js/doctype_js/outward_sample.js",
+	"Outward Tracking": "public/js/doctype_js/outward_tracking.js",
 }
 
 # Home Pages
@@ -145,4 +146,7 @@ doc_events = {
 		"validate":"yogeshdyes.api.validate_user_permission",
 		"on_trash":"yogeshdyes.api.validate_user_permission",
 	},
+	"Purchase Invoice":{
+		"on_submit":"yogeshdyes.api.pi_on_submit"
+	}
 }
