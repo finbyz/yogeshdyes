@@ -33,3 +33,12 @@ def validate_gst_state_code(self):
 			elif self.supplier_gstin[0:2] != self.company_gstin[0:2]:
 				if gst_accounts[0].igst_account not in account_heads:
 					frappe.msgprint("IGST Account doesn't exists in taxes")				
+
+def pi_validate(self,method):
+	validate_company_gstin(self)
+
+def validate_company_gstin(self):
+	if self.billing_address:
+		billing_gstin = frappe.db.get_value("Address",{"name":self.billing_address,"is_your_company_address":1},"gstin")
+		if billing_gstin and self.company_gstin != billing_gstin:
+			self.company_gstin = billing_gstin

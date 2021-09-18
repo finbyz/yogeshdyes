@@ -147,6 +147,7 @@ doc_events = {
 		"on_trash":"yogeshdyes.api.validate_user_permission",
 	},
 	"Purchase Invoice":{
+		"validate":"yogeshdyes.api.pi_validate",
 		"on_submit":"yogeshdyes.api.pi_on_submit"
 	}
 }
