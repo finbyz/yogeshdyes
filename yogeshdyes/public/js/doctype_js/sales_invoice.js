@@ -61,3 +61,11 @@ frappe.ui.form.on("Notify Party Address",{
         }
     },
 });
+frappe.ui.form.on("Sales Invoice",  {
+    custom_consignee_address:function(frm){
+        if(frm.doc.custom_consignee_address == null){
+            frm.set_value('custom_consignee_address_display' , null)
+        }
+
+    }
+});

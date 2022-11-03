@@ -92,13 +92,6 @@ doctype_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
 
 # Scheduled Tasks
 # ---------------
@@ -120,7 +113,13 @@ doctype_js = {
 # 		"yogeshdyes.tasks.monthly"
 # 	]
 # }
-
+scheduler_events = {
+	"cron":{
+		"5 */12 * * SUN": [
+			"yogeshdyes.api.sales_invoice_mails",
+		],
+	}
+}
 # Testing
 # -------
 
@@ -149,5 +148,8 @@ doc_events = {
 	"Purchase Invoice":{
 		"validate":"yogeshdyes.api.pi_validate",
 		"on_submit":"yogeshdyes.api.pi_on_submit"
+	},
+	"Sales Invoice": {
+		"before_save": "yogeshdyes.api.si_before_save"
 	}
 }
