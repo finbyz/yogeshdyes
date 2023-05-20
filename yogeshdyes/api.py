@@ -204,3 +204,15 @@ def send_sales_invoice_mails():
 			continue
 	# show_progress('Success', "All Mails Sent", str(cnt))
 	# frappe.db.set_value("Cities", "CITY0001", "total", cnt)
+
+def before_naming(self,method):
+	if self.link_to =='Supplier':
+		aliass = frappe.db.get_value('Supplier',self.party,'alias')
+		if aliass:
+			self.party_alias = aliass
+		else: self.party_alias = self.party
+	if self.link_to =='Customer':
+		aliass = frappe.db.get_value('Customer',self.party,'alias')
+		if aliass:
+			self.party_alias = aliass
+		else: self.party_alias = self.party

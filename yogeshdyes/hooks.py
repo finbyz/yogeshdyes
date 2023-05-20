@@ -151,5 +151,8 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"before_save": "yogeshdyes.api.si_before_save"
+	},
+	'Inward Sample':{
+		'before_naming':"yogeshdyes.api.before_naming"
 	}
 }
