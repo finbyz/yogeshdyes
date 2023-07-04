@@ -16,7 +16,6 @@ from erpnext.stock.get_item_details import (get_conversion_factor)
 from erpnext.controllers.accounts_controller import validate_and_delete_children
 @frappe.whitelist()
 def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, child_docname="items"):
-	frappe.msgprint('sent')
 	def check_doc_permissions(doc, perm_type="create"):
 		try:
 			doc.check_permission(perm_type)
