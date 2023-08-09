@@ -41,8 +41,16 @@ frappe.ui.form.on("Sales Invoice",  {
                 }
             }
         };
+        }
+        cur_frm.fields_dict.lut_detail.get_query = function(doc) {
+            return {
+                filters: {
+                    "Company": frm.doc.company
+                }
+            }
+        };
+        
     }
-}
 });
 frappe.ui.form.on("Notify Party Address",{
     notify_party: function(frm,cdt,cdn){
