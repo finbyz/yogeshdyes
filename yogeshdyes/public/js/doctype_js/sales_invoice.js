@@ -25,8 +25,43 @@ frappe.ui.form.on("Sales Invoice",  {
             });
         }
     },
+    commission_rate: function(frm) {
+        if (frm.doc.freight<0 && frm.doc.insurance<0){
+        let tot_cal=(frm.doc.total+frm.doc.freight+frm.doc.insurance);
+        let value=(tot_cal*frm.doc.commission_rate)/100
+        // this.frm.doc.total_commission = flt(value,precision("total_commission"));
+        frm.set_value("commission_usd",value);
+        // frm.set_value("total_commission",value);
+       }
+       if (frm.doc.freight>0 && frm.doc.insurance>0){
+        let tot_cal=(frm.doc.total);
+        let value=(tot_cal * frm.doc.commission_rate)/100
+        frm.set_value("commission_usd",value);
+       }
+     
+		// frm.trigger('calculate_commission_');
+	},
+    
+    // calculate_commission_: function (frm) {
+    //     console.log(frm.doc.freight)
+    //    if (frm.doc.freight<0 && frm.doc.insurance<0){
+    //     let tot_cal=(frm.doc.total+frm.doc.freight+frm.doc.insurance)*frm.doc.conversion_rate;
+    //     let value=(tot_cal*frm.doc.commission_rate)/100
+    //     console.log(value)
+    //     frm.set_value("total_commission",value);
+    //    }
+    //    if (frm.doc.freight>0 && frm.doc.insurance>0){
+    //     let tot_cal=(frm.doc.total)*frm.doc.conversion_rate;
+    //     let value=(tot_cal * frm.doc.commission_rate)/100
+    //     console.log(value)
+    //     frm.set_value("total_commission",value);
+    //    }
+    // },
+
+
     before_save: function (frm) {
         frm.trigger("cal_total");
+        frm.trigger("calculate_commission_");
     },
     cal_total: function (frm) {
         let total_gt_wt = frm.doc.total_tare_wt + frm.doc.total_qty;
@@ -75,7 +110,7 @@ frappe.ui.form.on("Sales Invoice",  {
             frm.set_value('custom_consignee_address_display' , '')
         }
 
-    }
+    },
 });
 
 frappe.ui.form.on("Sales Invoice",  {
