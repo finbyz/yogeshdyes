@@ -33,7 +33,7 @@ frappe.ui.form.on("Sales Invoice",  {
         frm.set_value("commission_usd",value);
         // frm.set_value("total_commission",value);
        }
-       if (frm.doc.freight>0 && frm.doc.insurance>0){
+       if (frm.doc.freight>=0 && frm.doc.insurance>=0){
         let tot_cal=(frm.doc.total);
         let value=(tot_cal * frm.doc.commission_rate)/100
         frm.set_value("commission_usd",value);
