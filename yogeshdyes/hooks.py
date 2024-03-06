@@ -153,7 +153,8 @@ doc_events = {
 		"on_submit":"yogeshdyes.api.pi_on_submit"
 	},
 	"Sales Invoice": {
-		"before_save": "yogeshdyes.api.si_before_save"
+		"before_save": "yogeshdyes.api.si_before_save",
+		"on_update": "yogeshdyes.api.si_on_update",
 	},
 	'Inward Sample':{
 		'before_naming':"yogeshdyes.api.before_naming"

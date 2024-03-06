@@ -41,7 +41,20 @@ frappe.ui.form.on("Sales Invoice",  {
      
 		// frm.trigger('calculate_commission_');
 	},
-    
+    custom_consignee_address:function(frm){
+        if(!frm.doc.custom_consignee_address){
+            frm.set_value('custom_consignee_address_display' , '')
+        }
+
+    },
+    custom_address:function(frm){
+        if(!frm.doc.custom_address){
+            console.log("test")
+            frm.set_value('custom_address_display' , '')
+        }
+
+    },
+
     // calculate_commission_: function (frm) {
     //     console.log(frm.doc.freight)
     //    if (frm.doc.freight<0 && frm.doc.insurance<0){
@@ -58,14 +71,27 @@ frappe.ui.form.on("Sales Invoice",  {
     //    }
     // },
 
+    cal_pallets: function (frm){
+        let total_pallets = 0;
+        let total_qty = 0;
 
+        frm.doc.items.forEach(function (d) {
+            total_qty += flt(d.qty);
+            total_pallets += flt(d.total_pallets);
+        });
+
+        frm.set_value("pallet_weight",total_pallets);
+        frm.set_value("total_net_weight", total_qty);
+    },
     before_save: function (frm) {
         frm.trigger("cal_total");
-        frm.trigger("calculate_commission_");
+        frm.trigger("cal_pallets");
+        // frm.trigger("calculate_commission_");
     },
     cal_total: function (frm) {
         let total_gt_wt = frm.doc.total_tare_wt + frm.doc.total_qty;
         frm.set_value("total_gr_wt", total_gt_wt);
+        
     },
     onload: function(frm){
         if(frm.doc.letter_head){
@@ -85,7 +111,8 @@ frappe.ui.form.on("Sales Invoice",  {
             }
         };
         
-    }
+    }, 
+    
 });
 frappe.ui.form.on("Notify Party Address",{
     notify_party: function(frm,cdt,cdn){
@@ -104,21 +131,71 @@ frappe.ui.form.on("Notify Party Address",{
         }
     },
 });
-frappe.ui.form.on("Sales Invoice",  {
-    custom_consignee_address:function(frm){
-        if(!frm.doc.custom_consignee_address){
-            frm.set_value('custom_consignee_address_display' , '')
-        }
-
+frappe.ui.form.on("Sales Invoice Item",  {
+    freight: function(frm, cdt, cdn) {
+        frm.events.calculate_total_freight(frm, cdt, cdn)
     },
-});
-
-frappe.ui.form.on("Sales Invoice",  {
-    custom_address:function(frm){
-        if(!frm.doc.custom_address){
-            console.log("test")
-            frm.set_value('custom_address_display' , '')
-        }
-
+    items_remove: function(frm, cdt, cdn) {
+        frm.events.calculate_total_freight(frm, cdt, cdn)
     }
 });
+
+erpnext.accounts.SalesInvoiceController = class SalesInvoiceController extends erpnext.accounts.SalesInvoiceController{
+    payment_terms_template() {
+		var me = this;
+        const doc = me.frm.doc;
+		if(doc.payment_terms_template && doc.doctype !== 'Delivery Note') {
+            if (frappe.meta.get_docfield("Sales Invoice", "bl_date") || frappe.meta.get_docfield("Sales Invoice", "shipping_bill_date")){
+                var posting_date = doc.bl_date || doc.shipping_bill_date || doc.posting_date || doc.transaction_date;
+            }
+            else{
+                var posting_date =  doc.posting_date || doc.transaction_date;
+            }
+
+			frappe.call({
+				method: "erpnext.controllers.accounts_controller.get_payment_terms",
+				args: {
+					terms_template: doc.payment_terms_template,
+					posting_date: posting_date,
+					grand_total: doc.rounded_total || doc.grand_total,
+                    base_grand_total: doc.base_rounded_total || doc.base_grand_total,
+					bill_date: doc.bill_date
+				},
+				callback: function(r) {
+					if(r.message && !r.exc) {
+						me.frm.set_value("payment_schedule", r.message);
+					}
+				}
+			})
+		}
+    }
+    bl_date() {
+		var me = this;
+        const doc = me.frm.doc;
+		if(doc.payment_terms_template && doc.doctype !== 'Delivery Note') {
+            if (frappe.meta.get_docfield("Sales Invoice", "bl_date") || frappe.meta.get_docfield("Sales Invoice", "shipping_bill_date")){
+                var posting_date = doc.bl_date || doc.shipping_bill_date || doc.posting_date || doc.transaction_date;
+            }
+            else{
+                var posting_date =  doc.posting_date || doc.transaction_date;
+            }
+
+			frappe.call({
+				method: "erpnext.controllers.accounts_controller.get_payment_terms",
+				args: {
+					terms_template: doc.payment_terms_template,
+					posting_date: posting_date,
+					grand_total: doc.rounded_total || doc.grand_total,
+                    base_grand_total: doc.base_rounded_total || doc.base_grand_total,
+					bill_date: doc.bill_date
+				},
+				callback: function(r) {
+					if(r.message && !r.exc) {
+						me.frm.set_value("payment_schedule", r.message);
+					}
+				}
+			})
+		}
+}}
+
+extend_cscript(cur_frm.cscript, new erpnext.accounts.SalesInvoiceController({ frm: cur_frm }));

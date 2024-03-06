@@ -48,6 +48,15 @@ def validate_company_gstin(self):
 def si_before_save(self,method):
 	fob_calculation(self)
 
+def si_on_update(self,method):
+	total_pallets = 0
+
+	for d in self.items:
+		total_pallets += flt(d.total_pallets)
+	
+	self.pallet_weight=total_pallets
+	self.total_net_weight = self.total_qty
+
 def fob_calculation(self):
 	for d in self.items:
 		d.freight_inr = flt(d.freight * self.conversion_rate)
